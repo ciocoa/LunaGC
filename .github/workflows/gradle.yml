@@ -1,0 +1,38 @@
+name: Gradle
+
+on:
+  push:
+    branches: [ "main" ]
+    tags: [ "v*.*.*" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: build
+
+    steps:
+      - name: Checkout server
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Execute Gradle build
+        run: chmod +x ./gradlew && ./gradlew jar
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: ./*.jar
